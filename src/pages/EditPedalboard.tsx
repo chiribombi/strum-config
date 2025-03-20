@@ -7,6 +7,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import ManagePedals from '@/components/ManagePedals';
 
 // Sample data for demonstration
 import { samplePedalboards } from '@/lib/sampleData';
@@ -18,6 +19,7 @@ const EditPedalboard: React.FC = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [pedalboard, setPedalboard] = useState<Pedalboard | null>(null);
+  const [managePedalsOpen, setManagePedalsOpen] = useState(false);
 
   useEffect(() => {
     // In a real app, we would fetch data from API or local storage
@@ -50,6 +52,16 @@ const EditPedalboard: React.FC = () => {
     });
     
     navigate(`/pedalboard/${id}`);
+  };
+
+  const handleUpdatePedals = (updatedPedals: Pedalboard['pedals']) => {
+    if (pedalboard) {
+      setPedalboard({
+        ...pedalboard,
+        pedals: updatedPedals,
+        updatedAt: new Date(),
+      });
+    }
   };
 
   if (loading) {
@@ -126,10 +138,7 @@ const EditPedalboard: React.FC = () => {
               type="button"
               variant="outline" 
               className="w-full mt-3"
-              onClick={() => toast({
-                title: "Próximamente",
-                description: "Esta funcionalidad estará disponible en la próxima actualización"
-              })}
+              onClick={() => setManagePedalsOpen(true)}
             >
               Gestionar pedales
             </Button>
@@ -142,6 +151,13 @@ const EditPedalboard: React.FC = () => {
           </div>
         </form>
       </main>
+
+      <ManagePedals
+        pedals={pedalboard.pedals}
+        open={managePedalsOpen}
+        onOpenChange={setManagePedalsOpen}
+        onSave={handleUpdatePedals}
+      />
     </div>
   );
 };
